@@ -24,7 +24,6 @@ def Desordenada_1(s,x):
 def Desordenada_2(s,x):
     for i in range(n):
         s.append(x[i]**2)
-
     s = (sum(s))/n
     s = s - promedio2
     s = round(s,2)
