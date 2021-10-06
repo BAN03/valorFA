@@ -2,35 +2,36 @@ from math import log
 arango = []
 n = []
 h = []
+f = 0
 
 def tabular():
     g = 0
     intervalo = round(1 + (3.3 * log(total,10)))
     minimo = min(arango)
     maximo = max(arango)
-    rango = round(maximo - minimo,2)
-    c = round(rango/intervalo,2)
-    interv = round(rango/c)
-    print("\n valor minimo: " + str(minimo))
-    print(" valor maximo: " + str(maximo))
-    print(" rango: " + str(rango))
-    print(" intervalo = " + str(intervalo))
-    print(" c = " + str(c) + "\n")
+    rango = maximo - minimo
+    c = round((rango/intervalo),5)
+    interv = round((rango/c))
+    print("\n valor minimo: ",minimo)
+    print(" valor maximo: ",maximo)
+    print(" rango: ",round(rango,2))
+    print(" intervalo = ",round(intervalo,2))
+    print(" c = ",c,"\n")
 
     for l in range(interv):
-        y = round(minimo+c*(l+1),2)
-        ye= round(minimo+c*(l),2)
+        y = minimo+c*(l+1)
+        ye= minimo+c*(l)
         if l == 0:
-            n.append(str(l+1) + ": " + str(minimo) + " - " + str(y) )
+            n.append(str(l+1) + ": " + str(round(minimo,2)) + " - " + str(round(y,2)) )
         else:
-            n.append(str(l+1) + ": " + str(ye) + " - " + str(y) )
+            n.append(str(l+1) + ": " + str(round(ye,2)) + " - " + str(round(y,2)) )
 
     for k in range(interv):
-        y = round(minimo+c*(k+1),2)
+        y = minimo+c*(k+1)
         for j in range(total):
             if (y > arango[j] and y - c <= arango[j]) and not (k == interv-1):
                 g += 1
-            elif (k == interv-1) and (y >= arango[j] and y - c <= arango[j]):
+            elif (k == interv-1) and (y - c <= arango[j]):
                 g += 1
         h.insert(k,g)
         g = 0
@@ -76,9 +77,9 @@ def correct():
 try:
     total = int(input("Total de valores: "))
     for i in range(total):
-        i += 1
-        x = float(input("valor " + str(i) + ": "))
-        arango.insert(i,x)
+        f += 1
+        x = float(input("valor " + str(f) + ": "))
+        arango.append(x)
 
     correct()
 
