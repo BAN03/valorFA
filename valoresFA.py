@@ -1,87 +1,66 @@
 from math import log
-arango = []
-n = []
-h = []
-f = 0
+import pandas as pd
+pd.set_option('display.max_rows', None)
 
-def tabular():
+def tabular(datos:int):
+    intervalos, frecuencia_absoluta, marca_clase, frecuencia_absoluta_acumulada, frecuencia_relativa_acumulada = [[],[],[],[],[]]
     g = 0
     intervalo = round(1 + (3.3 * log(total,10)))
-    minimo = min(arango)
-    maximo = max(arango)
+    minimo = min(datos)
+    maximo = max(datos)
     rango = maximo - minimo
-    c = round((rango/intervalo),5)
+    c = round((rango/intervalo),3)
     interv = round((rango/c))
     print("\n valor minimo: ",minimo)
     print(" valor maximo: ",maximo)
     print(" rango: ",round(rango,2))
     print(" intervalo = ",round(intervalo,2))
-    print(" c = ",c,"\n")
+    print(" amplitud = ",c,"\n")
 
+    # asignacion de limite inferior y superior
     for l in range(interv):
-        y = minimo+c*(l+1)
-        ye= minimo+c*(l)
+        limite_superior = minimo+c*(l+1)
+        limite_inferior= minimo+c*(l)
         if l == 0:
-            n.append(str(l+1) + ": " + str(round(minimo,2)) + " - " + str(round(y,2)) )
+            intervalos.append(f"{round(minimo,2)} - {round(limite_superior,2)}")
+            marca_clase.append(round((minimo + limite_superior)/2, 4))
         else:
-            n.append(str(l+1) + ": " + str(round(ye,2)) + " - " + str(round(y,2)) )
+            intervalos.append(f"{round(limite_inferior,2)} - {round(limite_superior,2)}")
+            marca_clase.append(round((limite_inferior + limite_superior)/2, 4))
 
+    # ASIGNADOR DE FRECUENCIA ABSOLUTA
     for k in range(interv):
-        y = minimo+c*(k+1)
+        limite_superior = minimo+c*(k+1)
         for j in range(total):
-            if (y > arango[j] and y - c <= arango[j]) and not (k == interv-1):
+            if (limite_superior > datos[j] and limite_superior - c <= datos[j]) and not (k == interv-1):
                 g += 1
-            elif (k == interv-1) and (y - c <= arango[j]):
+            elif (k == interv-1) and (limite_superior - c <= datos[j]):
                 g += 1
-        h.insert(k,g)
+        frecuencia_absoluta.insert(k,g)
         g = 0
 
-    print("____________________________")
-    print("|        N        |   FA   |")
-    print("|--------------------------|")
+    frecuencia_relativa = [round(frecuencia/total, 4) for frecuencia in frecuencia_absoluta]
 
+    # ASIGNAR ACUMULADORES
     for m in range(interv):
-        print("| "+n[m]+"   |   "+ str(h[m])+"    |")
-        print("|--------------------------|")
+        if m == 0:
+            frecuencia_absoluta_acumulada.append(frecuencia_absoluta[m])
+            frecuencia_relativa_acumulada.append(frecuencia_relativa[m])
+        else:
+            frecuencia_absoluta_acumulada.append(frecuencia_absoluta[m] + frecuencia_absoluta_acumulada[m - 1])
+            frecuencia_relativa_acumulada.append(frecuencia_relativa[m] + frecuencia_relativa_acumulada[m - 1])
+
+    df = pd.DataFrame({'Intervalos' : intervalos, 'MC' : marca_clase, 'FA' : frecuencia_absoluta, 'FAA' : frecuencia_absoluta_acumulada,
+                        'FR' : frecuencia_relativa, 'FRA' : frecuencia_relativa_acumulada})
+    print(df)
+    intervalos, frecuencia_absoluta, marca_clase, frecuencia_absoluta_acumulada, frecuencia_relativa_acumulada = [[],[],[],[],[]]
 
 
-def cambiov(ncambio):
-    print("Que valor quieres poner?")
-    acambio = float(input("Valor: "))
-    print("Se cambiara: ", arango[ncambio], " por: ", acambio, " es correcto?")
-    aceptar = input("[si/no]: ")
-    if aceptar == "no":
-        cambiov(arango, ncambio)
-    elif aceptar == "si":
-        arango.pop(ncambio)
-        arango.insert(ncambio, acambio)
-        print("Valor",ncambio+1,": ",arango[ncambio])
-        correct()
-    else:
-        print("\n     OPCION INCORRECTA")
 
-
-def correct():
-    print("Todos los valores son correctos?")
-    cambio = input("[si/no]: ")
-    if cambio == "no":
-        print("Que valor quieres cambiar?")
-        ncambio = int(input("Valor: "))-1
-        print("Valor a cambiar: ", arango[ncambio])
-        cambiov(ncambio)
-    elif cambio == "si":
-        tabular()
-    else:
-        print("\n     OPCION INCORRECTA")
-
-try:
-    total = int(input("Total de valores: "))
-    for i in range(total):
-        f += 1
-        x = float(input("valor " + str(f) + ": "))
-        arango.append(x)
-
-    correct()
-
-except Exception as e:
-    print("\n     SE ESPERABA UN VALOR NUMERICO")
+total = 27
+alturas = [1.87, 1.70, 1.70, 1.72, 1.73, 1.66, 1.63, 1.72, 1.75, 1.65, 1.57, 1.85, 1.79, 1.73, 1.58, 1.75, 1.73, 1.66, 1.74, 1.60, 1.70, 1.88, 1.56, 1.67, 1.54, 1.70, 1.67]
+peso = [100, 56, 70, 62, 72, 60, 63, 50, 70, 80, 56, 75, 75, 75, 57, 72, 73, 66, 76, 55, 60, 77, 50, 64, 50, 50, 54]
+edad = [22, 19, 18, 20, 18, 19, 19, 20, 18, 38, 18, 19, 18, 18, 18, 22, 21, 18, 18, 19, 18, 18, 18, 18, 18, 18, 19]
+tabular(alturas)
+tabular(peso)
+tabular(edad)
